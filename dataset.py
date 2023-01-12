@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset
 
@@ -14,8 +15,8 @@ class CustomDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, id):
-        observed_values = self.data.loc[id, :self.observed_num]
-        predicted_values = self.data.loc[id, self.observed_num:(self.observed_num+self.predicted_num)]
+        observed_values = np.array(self.data.loc[id, :2*self.observed_num-1])
+        predicted_values = np.array(self.data.loc[id, 2*self.observed_num:(2*(self.observed_num+self.predicted_num)-1)])
 
         if self.transform:
             observed_values = self.transform(observed_values)

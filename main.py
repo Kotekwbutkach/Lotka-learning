@@ -17,16 +17,16 @@ class LVPredictorNetwork(nn.Module):
 
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(2 * N, 16),
+            nn.Linear(2 * N, N + k, bias=False).double(),
             nn.ReLU(),
-            nn.Linear(16, 16),
+            nn.Linear(N + k, N + k, bias=False).double(),
             nn.ReLU(),
-            nn.Linear(16, 2 * k),
+            nn.Linear(N + k, 2 * k, bias=False).double(),
         )
 
     def forward(self, x):
         x = self.flatten(x)
-        logits = self.linear_relu_stack(x.to('cuda'))
+        logits = self.linear_relu_stack(x.to('cpu'))
         return logits
 
 
@@ -105,6 +105,7 @@ for epoch in range(EPOCHS):
 
     # Log the running loss averaged per batch
     # for both training and validation
+    print(avg_validation_loss)
     writer.add_scalars('Training vs. Validation Loss',
                     { 'Training': avg_loss, 'Validation': avg_validation_loss},
                     epoch_number + 1)
